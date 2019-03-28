@@ -27,7 +27,7 @@ class MergeJsonWebpackPlugin {
                         this.processFiles(files, outputPath, resolve, reject);
                     })
                         .then((res) => {
-                        this.addAssets(compilation, res);
+                        this.addAssets(compilation, res, this.options.postOutputGeneration);
                         done();
                     })
                         .catch((err) => {
@@ -51,7 +51,7 @@ class MergeJsonWebpackPlugin {
                     es6_promise_1.Promise.all(groupByPromises)
                         .then((opsResponse) => {
                         opsResponse.forEach((res) => {
-                            this.addAssets(compilation, res);
+                            this.addAssets(compilation, res, this.options.postOutputGeneration);
                         });
                         done();
                     })
@@ -208,7 +208,7 @@ class MergeJsonWebpackPlugin {
         this.options.encoding = this.options.encoding != null ? this.options.encoding : UTF8_ENCODING;
         this.logger = new Logger(this.options.debug);
     }
-    addAssets(compilation, res) {
+    addAssets(compilation, res, postOutputGeneration) {
         compilation.assets[res.filepath] = {
             size: function () {
                 return res.content.length;
@@ -217,6 +217,7 @@ class MergeJsonWebpackPlugin {
                 return res.content;
             }
         };
+        postOutputGeneration(res.content);
     }
 }
 class Response {
